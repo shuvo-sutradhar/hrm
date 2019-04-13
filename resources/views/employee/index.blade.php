@@ -50,6 +50,36 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @php $count = 0 @endphp
+                            @foreach($employees as $employee)
+                            @php $count++ @endphp
+                            <tr>
+                                <td>{{ $count++}}</td>
+                                <td>{{ $employee->name }}</td>
+                                <td>{{ $employee->email }}</td>
+                                <td><span class="badge bg-primary text-light">{{ $employee->active ? 'Active' : 'Inactive' }}</span></td>
+
+                                <td>{{ $employee->created_at->diffForHumans() }}</td>
+                                <td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-id="11" data-name="Developer" data-permission="edit-employee, add-employee, delete-employee, view-employee, shuvo">
+                                                <i class="fa fa-eye"></i>
+                                          </button>
+
+                                            <a href="{{ route('employee.edit',$employee->slug) }}" class="btn btn-sm btn-primary js-tooltip-enabled" data-toggle="tooltip" title="" data-original-title="Edit">
+                                                <i class="fa fa-pencil-alt"></i>
+                                            
+                                            </a><a href="#" onclick="deleteData(event,id)" class="btn btn-sm btn-primary js-tooltip-enabled" data-toggle="tooltip" title="" data-original-title="Delete">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
 
             </div>
@@ -65,26 +95,3 @@
        
 @endsection
 
-
-@section('scripts')
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-
-    <script type="text/javascript">
-        $(document).ready( function () {
-            $('#myTable').DataTable({
-                processing: true,
-                    serverSide: true,
-                    ajax: '{!! route('employee.data') !!}',
-                    columns: [
-                        { data: 'id', name: 'id' },
-                        { data: 'name', name: 'name' },
-                        { data: 'email', name: 'email' },
-                        { data: 'active', name: 'active' },
-                        { data: 'created_at', name: 'created_at' },
-                        { data: 'action', name: 'action' }
-                ]
-            });
-        } );
-    </script>
-
-@endsection

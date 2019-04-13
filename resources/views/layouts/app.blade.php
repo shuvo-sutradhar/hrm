@@ -27,9 +27,12 @@
         <link rel="apple-touch-icon" sizes="180x180" href="{{asset('admin-assets/media/favicons/apple-touch-icon-180x180.png')}}">
         <!-- END Icons -->
 
+        <link rel="stylesheet" href="{{ asset('admin-assets/js/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}">
         <!-- Stylesheets -->
+        <link rel="stylesheet" id="css-main" href="{{asset('admin-assets/js/plugins/select2/css/select2.min.css')}}">
         <!-- Fonts and Codesahper framework -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,400i,600,700">
+        <link rel="stylesheet" id="css-main" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
         <link rel="stylesheet" id="css-main" href="{{asset('admin-assets/css/codeshaper.min.css')}}">
         <link rel="stylesheet" id="css-main" href="{{asset('admin-assets/css/codeshaperNew.css')}}">
         @yield('styles')
@@ -57,8 +60,9 @@
             assets/js/core/jquery.appear.min.js
             assets/js/core/js.cookie.min.js
         -->
+        
         <script src="{{asset('admin-assets/js/codeshaper.core.min.js')}}"></script>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
         <!--
             codesahper JS
 
@@ -67,18 +71,27 @@
         -->
         <script src="{{asset('admin-assets/js/codeshaper.app.min.js')}}"></script>
 
-        <!-- Page JS Plugins -->
-        <script src="{{asset('admin-assets/js/plugins/jquery-sparkline/jquery.sparkline.min.js')}}"></script>
-        <script src="{{asset('admin-assets/js/plugins/chart.js/Chart.bundle.min.j')}}s"></script>
 
         <!-- Page JS Code -->
         <script src="{{asset('admin-assets/js/pages/be_pages_dashboard.min.js')}}"></script>
 
+        <!-- Page JS Plugins -->
+        <script src="{{asset('admin-assets/js/plugins/moment/moment.min.js')}}"></script>
+        <script src="{{ asset('admin-assets/js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+        <script src="{{asset('admin-assets/js/plugins/select2/js/select2.full.min.js')}}"></script>
+        <script src="{{asset('admin-assets/js/plugins/jquery-sparkline/jquery.sparkline.min.js')}}"></script>
+        <script src="{{asset('admin-assets/js/plugins/chart.js/Chart.bundle.min.j')}}s"></script>
+
+
+        <!-- sweet alert js file -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        @include('sweet::alert')
         <!-- external js  -->
         @yield('scripts');
 
 
         <!-- Page JS Helpers (jQuery Sparkline plugin) -->
-        <script>jQuery(function(){ Dashmix.helpers('sparkline'); });</script>
+        <script>jQuery(function(){ Dashmix.helpers(['datepicker','sparkline', 'colorpicker', 'maxlength', 'select2', 'rangeslider', 'masked-inputs']); });</script>
+
     </body>
 </html>

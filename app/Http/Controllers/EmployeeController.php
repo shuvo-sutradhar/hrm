@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\User;
@@ -25,32 +27,10 @@ class EmployeeController extends Controller
     public function index()
     {
         //
-        return view('employee.index');
+        $employees = User::paginate(10);
+        return view('employee.index',compact('employees'));
     }
-    /**
-     * Display datatable data.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getEmployee()
-    {
-        //
 
-        return Datatables::of(User::query())
-            ->setRowClass('{{ $id % 2 == 0 ? "alert-success" : "alert-warning" }}')
-            ->setRowId('{{$id}}')
-            ->setRowAttr([ 'align' => 'center'])
-            ->editColumn('active', function(User $user) {
-                return  $user->active == 1 ? 'Active' : 'Inactive';
-            })
-            ->editColumn('created_at', function(User $user) {
-                return  $user->created_at->diffForHumans();
-            })
-            //->removeColumn('updated_at')
-            ->addColumn('action', 'column')
-            ->rawColumns(['action'])
-            ->make(true);
-    }
     /**
      * Display a listing of the resource in trash.
      *
@@ -83,6 +63,23 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         //
+
+        $this->validate($request,[
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'roles' => 'required'
+        ]);
+        $roles = $request['roles'];
+        $user = User::create([
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+        ]);
+
+        $user->assignRole($roles);
+
+        return redirect(route('employee.index'));
     }
 
     /**
@@ -102,9 +99,11 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($slug)
     {
         //
+        $user = User::where('slug',$slug)->firstOrFail();
+        return view('employee.edit',compact('user'));
     }
 
     /**
@@ -114,9 +113,28 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
         //
+        $user = User::where('slug',$slug)->firstOrFail();
+
+        $this->validate($request, [
+            'name' => 'required|string|max:191',
+            'email' => 'sometime|string|email|max:191|unique:users,email,'.$user->id,
+        ]);
+
+        $user->name = $request['name'];
+        $user->email = $user->email;
+
+        if($request['password']) {
+            $user->password = Hash::make($request['password']);
+        }
+
+        
+        $user->save();
+
+        $user->syncRoles($request->roles);
+        return redirect(route('employee.index'));
     }
 
     /**
@@ -128,5 +146,8 @@ class EmployeeController extends Controller
     public function destroy($id)
     {
         //
+        $user = User::where('slug',$slug)->firstOrFail();
+        $user->delete();
+        return redirect()->back();
     }
 }
